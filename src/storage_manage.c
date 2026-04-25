@@ -12,6 +12,8 @@ int store(int length,char msg[],int ctr,int memory[1024][1024][8])
         {
             if(((read(i,j*16,memory)>>7)&1)==1)
                 continue;
+            write(i,j*16+14,0,memory);
+            write(i,j*16+15,0,memory);
             int info=(1<<7)|(msg[ctr]);
             ctr++;
             write(i,j*16,info,memory);
@@ -26,13 +28,22 @@ int store(int length,char msg[],int ctr,int memory[1024][1024][8])
                 else
                     break;
             }
-            info=store(length,msg,ctr,memory);
-            write(i,j*16+14,info>>8,memory);
-            write(i,j*16+15,info&((1<<8)-1),memory);
+            if(ctr<length&&i==1023&&j==63)
+            {
+                write(i,j*16,0,memory);
+                return -1;
+            }
+            int ptr=store(length,msg,ctr,memory);
+            if(ptr==-1)
+            {
+                write(i,j*16,0,memory);
+                return -1;
+            }
+            write(i,j*16+14,ptr>>8,memory);
+            write(i,j*16+15,ptr&((1<<8)-1),memory);
             return (j<<10)|i;
         }
     }
-    return -1;
 }
 
 // this us for deleting
@@ -42,8 +53,6 @@ int delet(int ptr,int memory[1024][1024][8])
         return 0;
     int j=ptr>>10;
     int i=ptr&((1<<10)-1);
-    if(j<0||j>+64||i<0||i>+1024)
-        return -1;
     write(i,j*16,0,memory);
     ptr=(read(i,j*16+14,memory)<<8)+read(i,j*16+15,memory);
     return delet(ptr,memory);
