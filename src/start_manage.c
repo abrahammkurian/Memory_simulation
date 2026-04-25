@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "read_and_write.h"
 #include "storage_manage.h"
 #include "start_manage.h"
