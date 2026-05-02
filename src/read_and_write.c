@@ -1,7 +1,9 @@
 #include "read_and_write.h"
 
+memory[1024][1024][8];
+
 // writing will be done here
-int write(int x,int y,int info,int memory[1024][1024][8])
+int write(int x,int y,int info)
 {
     for(int i=0;i<8;i++)
         memory[x][y][i]=(info>>i)&1;
@@ -9,7 +11,7 @@ int write(int x,int y,int info,int memory[1024][1024][8])
 }
 
 // reading will be done here
-int read(int x,int y,int memory[1024][1024][8])
+int read(int x,int y)
 {
     int info=0;
     for(int i=0;i<8;i++)
